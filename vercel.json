@@ -23,7 +23,12 @@
             "dest": "backend/server.js"
         },
         {
-            "handle": "filesystem"
+            "src": "/assets/(.*)",
+            "dest": "/assets/$1"
+        },
+        {
+            "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|map|webp|json))",
+            "dest": "/$1"
         },
         {
             "src": "/(.*)",
