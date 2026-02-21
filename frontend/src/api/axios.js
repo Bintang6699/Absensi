@@ -1,7 +1,13 @@
 import axios from 'axios';
 
+// Di production Vercel: gunakan VITE_API_URL (URL backend terpisah)
+// Di development lokal: gunakan '/api' (via Vite proxy ke localhost:5000)
+const BASE_URL = import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/api`
+    : '/api';
+
 const API = axios.create({
-    baseURL: '/api',
+    baseURL: BASE_URL,
     withCredentials: true,
 });
 
