@@ -30,15 +30,17 @@ router.get(
     // Generate token
     const token = require('../utils/generateToken')(req.user._id);
 
-    // Set cookie
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // Set cookie - di production (cross-origin Vercel) pakai sameSite: 'none'
     res.cookie('jwt', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,           // HTTPS wajib di production
+      sameSite: isProduction ? 'none' : 'lax', // 'none' untuk cross-origin
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
 
-    // Redirect to frontend with token
+    // Redirect ke frontend dengan token di URL
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     res.redirect(`${frontendUrl}/login/student?token=${token}`);
   }
