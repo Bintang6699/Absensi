@@ -18,18 +18,31 @@ require('./src/config/passport')(passport);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// CORS - dukung multiple origins (localhost dev + Vercel production)
+const allowedOrigins = [
+    process.env.FRONTEND_URL,
+    'http://localhost:5173',
+    'http://localhost:3000',
+].filter(Boolean); // hapus undefined/null
+
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Vite default port
-    credentials: true
+    origin: function (origin, callback) {
+        // Izinkan request tanpa origin (mobile apps, curl, Postman)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error(`CORS: Origin ${origin} tidak diizinkan`));
+    },
+    credentials: true,
 }));
+
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 app.use(morgan('dev'));
 app.use(passport.initialize());
-
-// Static Folder
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
