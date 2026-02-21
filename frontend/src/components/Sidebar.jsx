@@ -8,7 +8,9 @@ import {
     FaFileAlt,
     FaSignOutAlt,
     FaCog,
-    FaEnvelope
+    FaEnvelope,
+    FaTimes,
+    FaChevronRight
 } from 'react-icons/fa';
 
 const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
@@ -32,34 +34,31 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
     };
 
     const handleLinkClick = () => {
-        // Close mobile menu when a link is clicked
-        if (window.innerWidth < 768) {
-            setIsMobileOpen(false);
-        }
+        setIsMobileOpen(false);
     };
 
     return (
         <>
-            {/* Overlay for mobile */}
-            {isMobileOpen && (
-                <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
-                    onClick={() => setIsMobileOpen(false)}
-                />
-            )}
-
-            {/* Sidebar */}
             <div className={`
-                fixed md:static inset-y-0 left-0 z-50
-                bg-white w-64 min-h-screen shadow-lg flex flex-col
+                fixed inset-y-0 left-0 z-50
+                bg-white w-72 md:w-64 min-h-screen shadow-xl flex flex-col
                 transform transition-transform duration-300 ease-in-out
                 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
-                <div className="p-6 border-b flex items-center gap-3">
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                        E
+                {/* Header */}
+                <div className="p-5 border-b flex items-center justify-between bg-gradient-to-r from-indigo-600 to-purple-600">
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                            E
+                        </div>
+                        <h1 className="text-lg font-bold text-white">English Course</h1>
                     </div>
-                    <h1 className="text-xl font-bold text-gray-800">English Course</h1>
+                    <button
+                        className="md:hidden text-white/80 hover:text-white p-1"
+                        onClick={() => setIsMobileOpen(false)}
+                    >
+                        <FaTimes className="text-xl" />
+                    </button>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
