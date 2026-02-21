@@ -1,0 +1,12 @@
+{
+    "name": "absensi-monorepo",
+    "version": "1.0.0",
+    "description": "Absensi App - Monorepo (Frontend + Backend)",
+    "scripts": {
+        "build": "cd frontend && npm install && npm run build",
+        "install-all": "cd backend && npm install && cd ../frontend && npm install"
+    },
+    "engines": {
+        "node": ">=18.x"
+    }
+}

@@ -1,19 +1,25 @@
 # Node
-node_modules
-npm-debug.log
+node_modules/
+npm-debug.log*
 
-# Env
+# Env - JANGAN commit file .env yang berisi credentials!
+# Set variables ini di Vercel Dashboard > Settings > Environment Variables
 .env
 .env.local
-.env.*
+# Tapi .env.production frontend BOLEH di-commit (tidak ada credentials sensitif)
+!frontend/.env.production
+
+# Uploads (file yang diupload user, tidak perlu di-deploy ke Vercel)
+backend/uploads/*
+!backend/uploads/.gitkeep
 
 # Logs
-logs
+logs/
 *.log
 
-# Build
-dist
-build
+# Build output
+dist/
+build/
 
 # OS
 .DS_Store
