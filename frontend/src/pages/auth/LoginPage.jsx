@@ -65,7 +65,8 @@ const LoginPage = () => {
     };
 
     const handleGoogleLogin = () => {
-        window.open('http://localhost:5000/api/auth/google', '_self');
+        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        window.open(`${backendUrl}/api/auth/google`, '_self');
     };
 
     return (

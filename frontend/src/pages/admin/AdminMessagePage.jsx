@@ -348,7 +348,7 @@ const AdminMessagePage = () => {
                                                 {msg.attachments.map((file, idx) => (
                                                     <a
                                                         key={idx}
-                                                        href={`http://localhost:5000/${file.path.replace(/\\/g, '/')}`}
+                                                        href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${file.path.replace(/\\/g, '/')}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         className="flex items-center gap-2 px-3 py-1 bg-gray-100 text-sm text-blue-600 rounded-lg hover:bg-gray-200"

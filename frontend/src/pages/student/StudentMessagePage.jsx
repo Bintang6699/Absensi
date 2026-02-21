@@ -294,7 +294,7 @@ const StudentMessagePage = () => {
                                                 {msg.attachments.map((file, idx) => (
                                                     <a
                                                         key={idx}
-                                                        href={`http://localhost:5000/${file.path.replace(/\\/g, '/')}`}
+                                                        href={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${file.path.replace(/\\/g, '/')}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         onClick={(e) => e.stopPropagation()}

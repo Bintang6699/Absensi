@@ -40,8 +40,9 @@ const StudentLoginPage = () => {
     }, [user, navigate]);
 
     const handleGoogleLogin = () => {
-        // Ensure this matches your backend Google Auth URL
-        window.open('http://localhost:5000/api/auth/google', '_self');
+        // Gunakan VITE_API_URL di production (Vercel), localhost di development
+        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+        window.open(`${backendUrl}/api/auth/google`, '_self');
     };
 
     return (
