@@ -3,32 +3,31 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const { errorHandler } = require('./src/middleware/errorMiddleware');
-
 const passport = require('passport');
-
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const connectDB = require('./src/config/db');
 
 // Initialize app
 const app = express();
 
 require('./src/config/passport')(passport);
 
-// Middleware
+// Core Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// CORS - dukung multiple origins (localhost dev + Vercel production)
+// CORS - dukung multiple origins (localhost dev + Vercel frontend URL)
 const allowedOrigins = [
     process.env.FRONTEND_URL,
     'http://localhost:5173',
     'http://localhost:3000',
-].filter(Boolean); // hapus undefined/null
+].filter(Boolean);
 
 app.use(cors({
     origin: function (origin, callback) {
-        // Izinkan request tanpa origin (mobile apps, curl, Postman)
+        // Izinkan request tanpa origin (curl, Postman, server-to-server)
         if (!origin) return callback(null, true);
         if (allowedOrigins.includes(origin)) {
             return callback(null, true);
@@ -43,6 +42,30 @@ app.use(helmet({
 }));
 app.use(morgan('dev'));
 app.use(passport.initialize());
+
+// ── DB CONNECTION MIDDLEWARE ──────────────────────────────────────────────────
+// WAJIB sebelum semua routes agar DB sudah terkoneksi saat request masuk
+// Ini solusi untuk Vercel Serverless cold start
+app.use(async (req, res, next) => {
+    try {
+        await connectDB();
+        next();
+    } catch (err) {
+        console.error('DB connection error:', err.message);
+        res.status(503).json({
+            message: 'Database tidak tersedia, coba lagi dalam beberapa detik.'
+        });
+    }
+});
+// ─────────────────────────────────────────────────────────────────────────────
+
+// Static Folder untuk uploads (development)
+if (process.env.NODE_ENV !== 'production') {
+    app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+} else {
+    // Di Vercel, file uploads ada di /tmp
+    app.use('/uploads', express.static('/tmp/uploads'));
+}
 
 // Routes
 app.use('/api/auth', require('./src/routes/authRoutes'));
