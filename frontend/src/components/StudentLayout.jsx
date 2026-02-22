@@ -15,11 +15,11 @@ import {
 } from 'react-icons/fa';
 
 const menuItems = [
-    { path: '/student', name: 'Dashboard', icon: <FaHome /> },
-    { path: '/student/biodata', name: 'Biodata', icon: <FaUser /> },
-    { path: '/student/attendance', name: 'Absensi Saya', icon: <FaCalendarAlt /> },
-    { path: '/student/grades', name: 'Nilai & Laporan', icon: <FaStar /> },
-    { path: '/student/messages', name: 'Pesan', icon: <FaEnvelope /> },
+    { path: '/student', name: 'Dashboard', shortName: 'Home', icon: <FaHome /> },
+    { path: '/student/biodata', name: 'Biodata', shortName: 'Biodata', icon: <FaUser /> },
+    { path: '/student/attendance', name: 'Absensi Saya', shortName: 'Absensi', icon: <FaCalendarAlt /> },
+    { path: '/student/grades', name: 'Nilai & Laporan', shortName: 'Nilai', icon: <FaStar /> },
+    { path: '/student/messages', name: 'Pesan', shortName: 'Pesan', icon: <FaEnvelope /> },
 ];
 
 const StudentSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
@@ -49,7 +49,7 @@ const StudentSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
             {/* Sidebar */}
             <div className={`
                 fixed inset-y-0 left-0 z-50 md:relative md:z-auto
-                bg-white w-72 md:w-64 min-h-screen shadow-xl flex flex-col
+                bg-white w-64 min-h-screen shadow-xl flex flex-col
                 transform transition-transform duration-300 ease-in-out
                 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
@@ -59,7 +59,7 @@ const StudentSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                         <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-white font-bold text-lg">
                             S
                         </div>
-                        <h1 className="text-lg font-bold text-white">Student Area</h1>
+                        <h1 className="text-base font-bold text-white">Student Area</h1>
                     </div>
                     {/* Tombol tutup (mobile only) */}
                     <button
@@ -76,17 +76,17 @@ const StudentSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                             key={item.path}
                             to={item.path}
                             onClick={handleLinkClick}
-                            className={`flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all ${isActive(item.path)
-                                    ? 'bg-green-50 text-green-700 shadow-sm border border-green-100 font-semibold'
-                                    : 'text-gray-600 hover:bg-gray-50 active:bg-gray-100'
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive(item.path)
+                                ? 'bg-green-50 text-green-700 shadow-sm border border-green-100 font-semibold'
+                                : 'text-gray-600 hover:bg-gray-50 active:bg-gray-100'
                                 }`}
                         >
-                            <span className={`text-base ${isActive(item.path) ? 'text-green-600' : 'text-gray-400'}`}>
+                            <span className={`text-base flex-shrink-0 ${isActive(item.path) ? 'text-green-600' : 'text-gray-400'}`}>
                                 {item.icon}
                             </span>
                             <span className="font-medium text-sm">{item.name}</span>
                             {isActive(item.path) && (
-                                <FaChevronRight className="ml-auto text-xs text-green-400" />
+                                <FaChevronRight className="ml-auto text-xs text-green-400 flex-shrink-0" />
                             )}
                         </Link>
                     ))}
@@ -95,9 +95,9 @@ const StudentSidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                 <div className="p-3 border-t">
                     <button
                         onClick={logout}
-                        className="w-full flex items-center gap-3 px-4 py-3.5 text-red-500 hover:bg-red-50 active:bg-red-100 rounded-xl transition-all font-medium text-sm"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 active:bg-red-100 rounded-xl transition-all font-medium text-sm"
                     >
-                        <FaSignOutAlt />
+                        <FaSignOutAlt className="flex-shrink-0" />
                         <span>Keluar</span>
                     </button>
                 </div>
@@ -115,24 +115,29 @@ const BottomNav = ({ location }) => {
     };
 
     return (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-gray-200 safe-area-bottom shadow-lg">
-            <div className="flex items-center justify-around h-16">
-                {menuItems.map((item) => (
-                    <Link
-                        key={item.path}
-                        to={item.path}
-                        className={`flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all active:scale-90 ${isActive(item.path)
-                                ? 'text-green-600'
-                                : 'text-gray-400'
-                            }`}
-                    >
-                        <span className="text-lg">{item.icon}</span>
-                        <span className="text-[10px] font-medium leading-tight">{item.name}</span>
-                        {isActive(item.path) && (
-                            <span className="absolute bottom-0 w-1 h-1 bg-green-600 rounded-full mb-1" />
-                        )}
-                    </Link>
-                ))}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-gray-200 shadow-lg">
+            <div className="flex items-stretch" style={{ height: '60px' }}>
+                {menuItems.map((item) => {
+                    const active = isActive(item.path);
+                    return (
+                        <Link
+                            key={item.path}
+                            to={item.path}
+                            className={`flex flex-col items-center justify-center flex-1 px-0.5 pt-1 pb-1 transition-all active:scale-90 relative
+                                ${active ? 'text-green-600' : 'text-gray-400'}`}
+                        >
+                            {active && (
+                                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-green-500 rounded-full"></span>
+                            )}
+                            <span className={`text-base mb-0.5 ${active ? 'scale-110' : ''} transition-transform`}>
+                                {item.icon}
+                            </span>
+                            <span className="text-[9px] font-semibold leading-none text-center whitespace-nowrap">
+                                {item.shortName}
+                            </span>
+                        </Link>
+                    );
+                })}
             </div>
         </nav>
     );
@@ -148,39 +153,45 @@ const StudentLayout = () => {
         setIsMobileOpen(false);
     }, [location.pathname]);
 
+    const currentPage = menuItems.find(m =>
+        m.path === '/student'
+            ? location.pathname === '/student'
+            : location.pathname.startsWith(m.path)
+    );
+
     return (
         <div className="flex min-h-screen bg-gray-50">
-            {/* Sidebar (visible desktop only) */}
-            <div className="hidden md:block">
-                <StudentSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
-            </div>
-
-            {/* Mobile Sidebar (drawer) */}
-            {isMobileOpen && (
-                <StudentSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
-            )}
+            {/* Sidebar - menggunakan 1 instance dengan toggle transform */}
+            <StudentSidebar isMobileOpen={isMobileOpen} setIsMobileOpen={setIsMobileOpen} />
 
             {/* Main Content */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* Header */}
                 <header className="bg-white shadow-sm h-14 md:h-16 flex items-center justify-between px-4 md:px-6 sticky top-0 z-20">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
                         {/* Hamburger (mobile only) */}
                         <button
-                            className="md:hidden text-gray-600 text-xl p-1 hover:text-green-600 transition-colors"
+                            className="md:hidden text-gray-600 text-xl p-1 hover:text-green-600 transition-colors flex-shrink-0"
                             onClick={() => setIsMobileOpen(true)}
                         >
                             <FaBars />
                         </button>
 
                         {/* Title halaman (mobile) */}
-                        <span className="md:hidden font-semibold text-gray-700 text-sm">
-                            {menuItems.find(m =>
-                                m.path === '/student'
-                                    ? location.pathname === '/student'
-                                    : location.pathname.startsWith(m.path)
-                            )?.name || 'Student Area'}
-                        </span>
+                        <div className="md:hidden min-w-0">
+                            <span className="font-bold text-gray-800 text-sm block truncate">
+                                {currentPage?.name || 'Student Area'}
+                            </span>
+                            <span className="text-xs text-gray-400">Portal Siswa</span>
+                        </div>
+
+                        {/* Logo/Brand (desktop) */}
+                        <div className="hidden md:flex items-center gap-2">
+                            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                                S
+                            </div>
+                            <span className="font-bold text-gray-800">Student Area</span>
+                        </div>
                     </div>
 
                     {/* User info */}
@@ -191,7 +202,7 @@ const StudentLayout = () => {
                             <p className="text-xs text-gray-500">Kelas: {user?.classLevel || '-'}</p>
                         </div>
                         {/* Avatar */}
-                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden ring-2 ring-green-100">
+                        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden ring-2 ring-green-100 flex-shrink-0">
                             {user?.avatar ? (
                                 <img src={user.avatar} alt="avatar" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                             ) : (
@@ -201,7 +212,7 @@ const StudentLayout = () => {
                     </div>
                 </header>
 
-                {/* Page Content — tambah padding bottom agar tidak ketutup BottomNav */}
+                {/* Page Content — padding bottom agar tidak ketutup BottomNav */}
                 <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-y-auto">
                     <Outlet />
                 </main>

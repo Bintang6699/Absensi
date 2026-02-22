@@ -4,8 +4,31 @@ import { useAuth } from '../../context/AuthContext';
 import StudentStats from '../../components/StudentStats';
 import DashboardEditor from '../../components/DashboardEditor';
 import SimpleRichText from '../../components/SimpleRichText';
-import { FaEdit, FaImage, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaImage, FaClock } from 'react-icons/fa';
 import Swal from 'sweetalert2';
+
+// Live Clock
+const LiveClock = () => {
+    const [now, setNow] = useState(new Date());
+
+    useEffect(() => {
+        const timer = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    return (
+        <div className="bg-white rounded-xl border border-green-100 shadow-sm px-3 py-2 flex items-center gap-2">
+            <FaClock className="text-green-400 flex-shrink-0 text-sm" />
+            <div>
+                <div className="text-sm font-bold text-gray-800 font-mono leading-none">{timeStr}</div>
+                <div className="text-[10px] text-gray-400 leading-none mt-0.5 hidden sm:block">{dateStr}</div>
+            </div>
+        </div>
+    );
+};
 
 const StudentDashboardHome = () => {
     const { user, refreshUser } = useAuth();
@@ -14,10 +37,8 @@ const StudentDashboardHome = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [widgets, setWidgets] = useState([]);
 
-    // Auto-save debouncer
     const saveTimeout = useRef(null);
 
-    // Default widgets configuration
     const defaultWidgets = [
         { id: 'overview', type: 'System', content: 'Ringkasan Akademik' },
         { id: 'motivation', type: 'System', content: 'Kutipan Motivasi' },
@@ -38,7 +59,6 @@ const StudentDashboardHome = () => {
 
         if (user?._id) {
             fetchStats();
-            // Load widgets from user config or defaults
             if (user.dashboardConfig && user.dashboardConfig.length > 0) {
                 setWidgets(user.dashboardConfig);
             } else {
@@ -67,7 +87,6 @@ const StudentDashboardHome = () => {
         );
         setWidgets(updatedWidgets);
 
-        // Debounce Auto-save
         if (saveTimeout.current) clearTimeout(saveTimeout.current);
 
         saveTimeout.current = setTimeout(async () => {
@@ -78,20 +97,23 @@ const StudentDashboardHome = () => {
             } catch (error) {
                 console.error("Failed to auto-save widget data", error);
             }
-        }, 1000); // Save after 1 second of inactivity
+        }, 1000);
     };
 
-    // Widget Renderers
     const renderWidget = (widget) => {
         switch (widget.type) {
             case 'System':
-                if (widget.id === 'overview') return stats ? <StudentStats key={widget.id} data={stats} /> : <div key={widget.id} className="animate-pulse bg-gray-200 h-48 rounded-xl"></div>;
+                if (widget.id === 'overview')
+                    return stats
+                        ? <StudentStats key={widget.id} data={stats} />
+                        : <div key={widget.id} className="animate-pulse bg-gray-200 h-48 rounded-xl"></div>;
                 if (widget.id === 'motivation') return (
-                    <div key={widget.id} className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white h-full flex flex-col justify-center shadow-lg">
-                        <h2 className="text-xl font-bold mb-2">Terus Semangat!</h2>
-                        <p className="opacity-90 italic">
+                    <div key={widget.id} className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-white flex flex-col justify-center shadow-lg">
+                        <h2 className="text-lg sm:text-xl font-bold mb-2">Terus Semangat! 💪</h2>
+                        <p className="opacity-90 italic text-sm sm:text-base leading-relaxed">
                             "Pendidikan adalah senjata paling ampuh yang bisa kamu gunakan untuk mengubah dunia."
                         </p>
+                        <p className="text-white/60 text-xs mt-3">— Nelson Mandela</p>
                     </div>
                 );
                 return null;
@@ -102,7 +124,7 @@ const StudentDashboardHome = () => {
                         {widget.data ? (
                             <img src={widget.data} alt="Dashboard Widget" className="w-full h-full object-cover" />
                         ) : (
-                            <div className="text-gray-400 flex flex-col items-center">
+                            <div className="text-gray-400 flex flex-col items-center py-8">
                                 <FaImage size={32} />
                                 <span className="text-xs mt-2">Gambar belum diatur</span>
                             </div>
@@ -110,12 +132,13 @@ const StudentDashboardHome = () => {
                     </div>
                 );
 
-            case 'Custom': // Notes
+            case 'Custom':
                 return (
-                    <div key={widget.id} className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 h-full flex flex-col relative group shadow-sm min-h-[250px]">
+                    <div key={widget.id} className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 h-full flex flex-col relative shadow-sm min-h-[250px]">
                         <div className="flex justify-between items-center mb-2 border-b border-yellow-200 pb-2">
                             <h3 className="font-bold text-yellow-800 flex items-center gap-2 text-sm">
-                                <span className="p-1 bg-yellow-200 rounded text-xs"><FaEdit /></span> {widget.content}
+                                <span className="p-1 bg-yellow-200 rounded text-xs"><FaEdit /></span>
+                                {widget.content}
                             </h3>
                             <span className="text-[10px] text-yellow-600 italic">Auto-save</span>
                         </div>
@@ -134,32 +157,49 @@ const StudentDashboardHome = () => {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-gray-500">Memuat dashboard...</div>;
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center p-12 text-gray-400">
+            <div className="animate-spin w-8 h-8 border-4 border-green-200 border-t-green-500 rounded-full mb-3"></div>
+            <p className="text-sm">Memuat dashboard...</p>
+        </div>
+    );
 
     return (
-        <div className="space-y-6 pb-20">
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-800">Halo, {user?.name}!</h1>
-                    <div className="flex items-center gap-2 mt-1">
-                        <span className="bg-indigo-100 text-indigo-700 text-xs font-mono py-1 px-2 rounded-md">
+        <div className="space-y-5 pb-4">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                <div className="min-w-0">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-800 truncate">
+                        Halo, {user?.name?.split(' ')[0]}! 👋
+                    </h1>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        <span className="bg-green-100 text-green-700 text-xs font-mono py-1 px-2 rounded-md">
                             {user?.studentId || 'ID: -'}
                         </span>
-                        <p className="text-gray-500 text-sm hidden sm:block">Sesuaikan dashboard-mu agar lebih nyaman.</p>
+                        <span className="text-gray-400 text-xs hidden sm:inline">•</span>
+                        <p className="text-gray-500 text-xs sm:text-sm hidden sm:block">Sesuaikan dashboard-mu.</p>
                     </div>
                 </div>
-                <button
-                    onClick={() => setIsEditing(true)}
-                    className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition shadow-sm"
-                >
-                    <FaEdit /> Atur Layout
-                </button>
+                <div className="flex items-center gap-2">
+                    {/* Clock tampil di semua ukuran */}
+                    <LiveClock />
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-xl hover:bg-gray-50 transition shadow-sm text-sm font-medium"
+                    >
+                        <FaEdit className="flex-shrink-0" />
+                        <span className="hidden sm:inline">Atur Layout</span>
+                    </button>
+                </div>
             </div>
 
-            {/* Grid Layout based on widgets order */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Widget Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {widgets.map(widget => (
-                    <div key={widget.id} className={widget.id === 'overview' ? 'md:col-span-2 lg:col-span-2' : 'h-full'}>
+                    <div
+                        key={widget.id}
+                        className={widget.id === 'overview' ? 'md:col-span-2 lg:col-span-2' : 'h-full'}
+                    >
                         {renderWidget(widget)}
                     </div>
                 ))}
