@@ -165,8 +165,13 @@ const checkStatus = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/logout
 // @access  Public
 const logoutUser = asyncHandler(async (req, res) => {
+    // Gunakan parameter yang sama seperti saat set cookie di login
+    // agar browser benar-benar menghapus cookie JWT yang tersimpan
     res.cookie('jwt', '', {
         httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
         expires: new Date(0),
     });
     res.status(200).json({ message: 'Logged out successfully' });

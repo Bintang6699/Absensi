@@ -12,6 +12,17 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const checkSession = async () => {
             try {
+                // Jika baru saja logout, jangan cek sesi backend
+                // agar user tidak ter-login ulang via cookie yang tersisa
+                const justLoggedOut = sessionStorage.getItem('just_logged_out');
+                if (justLoggedOut) {
+                    sessionStorage.removeItem('just_logged_out');
+                    localStorage.removeItem('user');
+                    setUser(null);
+                    setLoading(false);
+                    return;
+                }
+
                 // Try to get user from local storage first for immediate UI
                 const storedUser = localStorage.getItem('user');
                 if (storedUser) {
@@ -84,10 +95,13 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
-            // Clear all local session/storage data
+            // Hapus semua data sesi lokal
             setUser(null);
             sessionStorage.removeItem('user');
             localStorage.removeItem('user');
+            // Tandai bahwa user baru saja logout
+            // agar checkSession tidak restore sesi lama dari cookie
+            sessionStorage.setItem('just_logged_out', 'true');
             window.location.href = '/';
         }
     };
