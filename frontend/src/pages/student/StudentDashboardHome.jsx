@@ -17,14 +17,14 @@ const LiveClock = () => {
     }, []);
 
     const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const dateStr = now.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
 
     return (
         <div className="bg-white rounded-xl border border-green-100 shadow-sm px-3 py-2 flex items-center gap-2">
-            <FaClock className="text-green-400 flex-shrink-0 text-sm" />
+            <FaClock className="text-green-400 flex-shrink-0 text-xs" />
             <div>
-                <div className="text-sm font-bold text-gray-800 font-mono leading-none">{timeStr}</div>
-                <div className="text-[10px] text-gray-400 leading-none mt-0.5 hidden sm:block">{dateStr}</div>
+                <div className="text-xs font-bold text-gray-800 font-mono leading-none">{timeStr}</div>
+                <div className="text-[10px] text-gray-400 leading-none mt-0.5">{dateStr}</div>
             </div>
         </div>
     );
@@ -108,12 +108,16 @@ const StudentDashboardHome = () => {
                         ? <StudentStats key={widget.id} data={stats} />
                         : <div key={widget.id} className="animate-pulse bg-gray-200 h-48 rounded-xl"></div>;
                 if (widget.id === 'motivation') return (
-                    <div key={widget.id} className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-white flex flex-col justify-center shadow-lg">
-                        <h2 className="text-lg sm:text-xl font-bold mb-2">Terus Semangat! 💪</h2>
-                        <p className="opacity-90 italic text-sm sm:text-base leading-relaxed">
-                            "Pendidikan adalah senjata paling ampuh yang bisa kamu gunakan untuk mengubah dunia."
-                        </p>
-                        <p className="text-white/60 text-xs mt-3">— Nelson Mandela</p>
+                    <div key={widget.id} className="bg-gradient-to-br from-indigo-500 via-purple-600 to-blue-700 rounded-2xl p-5 sm:p-7 text-white flex flex-col justify-center shadow-lg relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+                        <div className="relative">
+                            <p className="text-white/60 text-xs font-semibold uppercase tracking-widest mb-2">Motivasi Hari Ini</p>
+                            <h2 className="text-base sm:text-lg font-extrabold mb-2 leading-snug">Terus Semangat! 💪</h2>
+                            <p className="opacity-80 italic text-xs sm:text-sm leading-relaxed">
+                                "Pendidikan adalah senjata paling ampuh yang bisa kamu gunakan untuk mengubah dunia."
+                            </p>
+                            <p className="text-white/50 text-[10px] mt-3 font-semibold">— Nelson Mandela</p>
+                        </div>
                     </div>
                 );
                 return null;
@@ -167,25 +171,23 @@ const StudentDashboardHome = () => {
     return (
         <div className="space-y-5 pb-4">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                 <div className="min-w-0">
-                    <h1 className="text-xl sm:text-2xl font-bold text-gray-800 truncate">
+                    <h1 className="text-lg sm:text-2xl font-extrabold text-gray-800 truncate">
                         Halo, {user?.name?.split(' ')[0]}! 👋
                     </h1>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        <span className="bg-green-100 text-green-700 text-xs font-mono py-1 px-2 rounded-md">
+                        <span className="bg-green-100 text-green-700 text-[10px] font-mono py-0.5 px-2 rounded-lg">
                             {user?.studentId || 'ID: -'}
                         </span>
-                        <span className="text-gray-400 text-xs hidden sm:inline">•</span>
-                        <p className="text-gray-500 text-xs sm:text-sm hidden sm:block">Sesuaikan dashboard-mu.</p>
+                        <p className="text-gray-400 text-xs">Sesuaikan dashboard-mu.</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
-                    {/* Clock tampil di semua ukuran */}
                     <LiveClock />
                     <button
                         onClick={() => setIsEditing(true)}
-                        className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-xl hover:bg-gray-50 transition shadow-sm text-sm font-medium"
+                        className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-3 py-2 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition shadow-sm text-xs sm:text-sm font-semibold"
                     >
                         <FaEdit className="flex-shrink-0" />
                         <span className="hidden sm:inline">Atur Layout</span>
